@@ -1,0 +1,11 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @cause.name %>
+</p>
+
+<%= link_to 'donate', new_cause_donation_path(
+    @cause, params.permit!.to_hash.slice("source", "engagement_id")) %>
+<%= link_to 'Edit', edit_cause_path(@cause) %> |
+<%= link_to 'Back', causes_path %>

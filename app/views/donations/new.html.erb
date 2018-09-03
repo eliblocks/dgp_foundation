@@ -1,0 +1,20 @@
+<h4>Donate to <%= @cause.name %></h4>
+
+<%= form_for([@cause, @donation]) do |f| %>
+  <%= f.label :full_name %>
+  <%= f.text_field :full_name %>
+  <%= f.label :email %>
+  <%= f.text_field :email %>
+  <%= f.label :postal_code %>
+  <%= f.text_field :postal_code %>
+  <%= f.label :amount %>
+  <%= f.number_field :amount %>
+  <%= f.hidden_field :source, value: params[:source] %>
+  <%= f.hidden_field :external_id, value: params[:engagement_id] %>
+  <div>
+    <br><%= f.submit "Donate" %>
+  </div>
+  <div>
+    <br><%= link_to 'Back', cause_path(@cause) %>
+  </div>
+<% end %>
