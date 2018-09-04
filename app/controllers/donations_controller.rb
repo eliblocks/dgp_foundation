@@ -15,8 +15,13 @@ class DonationsController < ApplicationController
     @donation = @cause.donations.new(donation_params)
     if @donation.save
       #report conversion on half of the causes to test pixel-only integration
-      report_conversion(@donation) if @cause.id % 2 == 0
-      redirect_to '/payment_confirmation'
+      # API call for Even-numbered offers
+      if @cause.id % 2 == 0
+        report_conversion(@donation)
+        redirect_to root_path
+      else
+        redirect_to '/payment_confirmation'
+      end
     else
       render 'new'
     end
@@ -41,22 +46,12 @@ class DonationsController < ApplicationController
   #adapter for reporting to traffic source platforms
   def report_conversion(donation)
     if donation.source == 'dgp'
-      report_dgp_conversion(donation.external_id)
+      donation.report_dgp_conversion
     elsif donation.source == 'swagbucks'
-      #report_swagbucks_conversion(donation.external_id)
+      #report_swagbucks_conversion(donation)
     end
   end
 
-  #Integration with Do Good Points
-  def report_dgp_conversion(external_id)
-    Rails.env == "production" ? url = "https://dogoodpoints.herokuapp.com" : url = 'http://localhost:3000'
-    conn = Faraday.new(url: url) do |faraday|
-      faraday.token_auth('2nrWLIoHwpR72w')
-    end
-    response = conn.post do |req|
-      req.url '/conversions'
-      req.headers['Content-Type'] = 'application/json'
-      req.body = { engagement: external_id }
-    end
-  end
+
+
 end
