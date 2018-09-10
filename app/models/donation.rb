@@ -1,5 +1,6 @@
 class Donation < ApplicationRecord
   belongs_to :cause
+  validates :amount, presence: true
 
   def report_dgp_conversion
     if Rails.env == "production"
@@ -10,7 +11,7 @@ class Donation < ApplicationRecord
       secret = 'oX7qB4nY3IwFjMHws1au'
     end
 
-    RestClient.post(url, { engagement_id: external_id },
+    RestClient.post(url, { engagement_id: external_id, amount: amount },
                           { "Authorization" => "Token #{secret}" })
   end
 end
